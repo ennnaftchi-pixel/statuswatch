@@ -34,7 +34,9 @@ Developed as an academic mini-project (Outils de Travail Collaboratif — Génie
                                                            +--------------------+  queries  +---------+
                                                            |     Prometheus     | <-------- | Grafana |
                                                            +--------------------+           +---------+
-Core Components
+```
+
+### Core Components
 - FastAPI Application: Serves the public status page, authenticated admin panel, and the /metrics endpoint.
 - Asynchronous Checker (asyncio + httpx): Background worker that concurrently probes active services, stores check results, detects state transitions, and triggers alerts.
 - PostgreSQL 16: Stores users, services, checks, and alerts.
@@ -131,6 +133,7 @@ statuswatch/
 ├── .env.example
 ├── pyproject.toml
 └── README.md
+```
 
 ## Functional Requirements
 
