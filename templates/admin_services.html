@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Services - StatusWatch{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Monitored Services</h2>
+        <a href="/admin/services/new" class="btn">+ Add Service</a>
+    </div>
+
+    {% if not services %}
+        <p>No services yet. Add one to start monitoring!</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td><a href="{{ service.url }}" target="_blank">{{ service.url }}</a></td>
+                    <td>
+                        {% if service.is_active %}
+                            <span class="badge badge-up">Active</span>
+                        {% else %}
+                            <span class="badge badge-down">Paused</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="/admin/services/{{ service.id }}/toggle" style="display:inline;">
+                            <button type="submit" class="btn-small">
+                                {% if service.is_active %}Pause{% else %}Resume{% endif %}
+                            </button>
+                        </form>
+                        <form method="post" action="/admin/services/{{ service.id }}/delete" style="display:inline;" onsubmit="return confirm('Delete this service?');">
+                            <button type="submit" class="btn-small btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+    <div style="margin-top: 1rem;">
+        <a href="/admin/dashboard">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

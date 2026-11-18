@@ -1,10 +1,7 @@
-from httpx import ASGITransport, AsyncClient
-
-from app.main import app
 from app.security import (
-    create_session_token,
     hash_password,
     verify_password,
+    create_session_token,
     verify_session_token,
 )
 
@@ -23,9 +20,7 @@ def test_session_token() -> None:
     assert verify_session_token("invalid.token.string") is None
 
 
-async def test_login_page_renders() -> None:
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.get("/admin/login")
-        assert response.status_code == 200
-        assert "Admin Login" in response.text
+async def test_login_page_renders(client) -> None:
+    response = await client.get("/admin/login")
+    assert response.status_code == 200
+    assert "Admin Login" in response.text

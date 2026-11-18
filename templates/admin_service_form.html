@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Add Service - StatusWatch{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Add New Service</h2>
+    <form method="post" action="/admin/services/new">
+        <label>Service Name
+            <input type="text" name="name" required placeholder="e.g. ISI Main Website">
+        </label>
+        <label>URL to Monitor
+            <input type="url" name="url" required placeholder="https://example.com">
+        </label>
+        <label>Expected HTTP Status
+            <input type="number" name="expected_status" value="200" required>
+        </label>
+        <label>Check Interval (Seconds)
+            <input type="number" name="check_interval_seconds" value="30" required min="10">
+        </label>
+        <button type="submit">Save Service</button>
+        <a href="/admin/services" style="margin-left: 1rem;">Cancel</a>
+    </form>
+</div>
+{% endblock %}

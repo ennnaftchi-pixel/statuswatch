@@ -1,10 +1,3 @@
-from httpx import ASGITransport, AsyncClient
-
-from app.main import app
-
-
-async def test_health() -> None:
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.get("/health")
+async def test_health(client) -> None:
+    response = await client.get("/health")
     assert response.json() == {"status": "ok"}

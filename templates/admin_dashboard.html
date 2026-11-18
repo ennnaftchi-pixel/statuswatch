@@ -6,6 +6,9 @@
 <div class="card">
     <h2>Admin Dashboard</h2>
     <p>Welcome, <strong>{{ user_email }}</strong>!</p>
+    <div style="margin: 2rem 0;">
+        <a href="/admin/services" class="btn">Manage Monitored Services</a>
+    </div>
     <form method="post" action="/admin/logout">
         <button type="submit" class="btn-danger">Logout</button>
     </form>
