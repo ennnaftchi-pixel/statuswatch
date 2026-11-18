@@ -6,7 +6,7 @@ Online services (club websites, APIs, internal apps) often go down before their 
 
 ## Academic Context
 
-Developed as an academic mini-project (Outils de Travail Collaboratif — Génie Logiciel et Données) for the 2nd-year Computer Science (L2-CS GLSI) curriculum at the Higher Institute of Computer Science of El-Manar (ISI, Université Tunis El Manar).
+Developed as an academic mini-project (Outils de Travail Collaboratif — Génie Logiciel et Données) for the 6nd-year Computer Science (L2-CS GLSI) curriculum at the Higher Institute of Computer Science of El-Manar (ISI, Université Tunis El Manar).
 
 - **Academic Year:** 2026/2027
 - **Official Start Date:** November 16, 2026
