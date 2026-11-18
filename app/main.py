@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select
 
+from app.checker import checker_loop
 from app.config import settings
 from app.db import SessionLocal, engine
 from app.models import Base, User
@@ -30,16 +32,23 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             session.add(new_user)
             await session.commit()
 
+    # 3. Start the background checker task
+    checker_task = asyncio.create_task(checker_loop())
+
     yield
+
+    # 4. Shut down gracefully
+    checker_task.cancel()
+    try:
+        await checker_task
+    except asyncio.CancelledError:
+        pass
     await engine.dispose()
 
 
 app = FastAPI(title="StatusWatch", lifespan=lifespan)
 
-# Mount static files (CSS, images)
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Include routes
 app.include_router(admin.router)
 
 

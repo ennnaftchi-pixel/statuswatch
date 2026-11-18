@@ -37,8 +37,9 @@ target-version = "py312"
 extend-exclude = ["*.egg-info", "build", "dist"]
 
 [tool.ruff.lint]
-# B008 is disabled because FastAPI's Depends() requires function calls in defaults.
-ignore = ["B008"]
+# B008 is for FastAPI Depends()
+# BLE001 is to allow broad Exception catching in background loops
+ignore = ["B008", "BLE001"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
