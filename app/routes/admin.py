@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.models import User, Service
-from app.security import verify_password, create_session_token, verify_session_token
+from app.models import Service, User
+from app.security import create_session_token, verify_password, verify_session_token
 from app.templates import templates
 
 router = APIRouter(prefix="/admin", tags=["admin"])
