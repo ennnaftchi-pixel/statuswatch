@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 import httpx
 from sqlalchemy import select
 
+from app.alerts import send_telegram_alert
 from app.db import SessionLocal
 from app.models import Check, Service
 
@@ -51,22 +52,24 @@ async def probe_service(client: httpx.AsyncClient, service: Service) -> None:
         )
         recent_checks = (await session.scalars(stmt)).all()
 
-        # Check for new outage (2 consecutive failures)
+        # 1. Check for new outage (2 consecutive failures)
         if (
             len(recent_checks) >= 2
             and recent_checks[0].status == "down"
             and recent_checks[1].status == "down"
             and (len(recent_checks) < 3 or recent_checks[2].status == "up")
         ):
-            print(f"ALERT: {service.name} is officially DOWN.")
+            print(f"[ALERT] {service.name} is officially DOWN")
+            await send_telegram_alert(service.name, "down", service.url)
 
-        # Check for recovery (current up, previous down)
+        # 2. Check for recovery (current up, previous down)
         if (
             len(recent_checks) >= 2
             and recent_checks[0].status == "up"
             and recent_checks[1].status == "down"
         ):
-            print(f"RECOVERY: {service.name} is back UP!")
+            print(f"[RECOVERY] {service.name} is back UP")
+            await send_telegram_alert(service.name, "up", service.url)
 
 
 async def checker_loop() -> None:
@@ -83,6 +86,6 @@ async def checker_loop() -> None:
                     await asyncio.gather(*tasks)
 
             except Exception as exc:
-                print(f"Error in checker loop: {exc}")
+                print(f"[ERROR] Error in checker loop: {exc}")
 
             await asyncio.sleep(10)
