@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from app.alerts import send_telegram_alert
 from app.db import SessionLocal
+from app.metrics import CHECKS_TOTAL, RESPONSE_TIME, SERVICE_UP
 from app.models import Check, Service
 
 
@@ -32,6 +33,12 @@ async def probe_service(client: httpx.AsyncClient, service: Service) -> None:
 
     response_time_ms = int((time.perf_counter() - start_time) * 1000)
 
+    # --- RECORD METRICS ---
+    CHECKS_TOTAL.labels(service_name=service.name, status=status).inc()
+    SERVICE_UP.labels(service_name=service.name).set(1 if status == "up" else 0)
+    RESPONSE_TIME.labels(service_name=service.name).observe(response_time_ms / 1000.0)
+    # ----------------------
+
     async with SessionLocal() as session:
         new_check = Check(
             service_id=service.id,
@@ -52,7 +59,6 @@ async def probe_service(client: httpx.AsyncClient, service: Service) -> None:
         )
         recent_checks = (await session.scalars(stmt)).all()
 
-        # 1. Check for new outage (2 consecutive failures)
         if (
             len(recent_checks) >= 2
             and recent_checks[0].status == "down"
@@ -62,7 +68,6 @@ async def probe_service(client: httpx.AsyncClient, service: Service) -> None:
             print(f"[ALERT] {service.name} is officially DOWN")
             await send_telegram_alert(service.name, "down", service.url)
 
-        # 2. Check for recovery (current up, previous down)
         if (
             len(recent_checks) >= 2
             and recent_checks[0].status == "up"

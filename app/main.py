@@ -2,8 +2,9 @@ import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from sqlalchemy import select
 
 from app.checker import checker_loop
@@ -50,3 +51,9 @@ app.include_router(admin.router)
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/metrics")
+async def metrics():
+    # generate_latest() reads all the metrics we recorded and formats them for Prometheus
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
