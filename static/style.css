@@ -84,3 +84,24 @@ th { background: #f4f4f5; font-weight: bold; }
 }
 .badge-up { background: #dcfce7; color: #166534; }
 .badge-down { background: #fee2e2; color: #991b1b; }
+
+/* Public Status Page */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+.status-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-top: 4px solid #ccc;
+    text-align: center;
+}
+.border-up { border-top-color: #22c55e; }
+.border-down { border-top-color: #ef4444; }
+.border-unknown { border-top-color: #a1a1aa; }
+.status-card h3 { margin-top: 0; margin-bottom: 1rem; }
+.metric { color: #666; font-size: 0.875rem; margin-top: 0.5rem; }
+.text-muted { color: #999; }

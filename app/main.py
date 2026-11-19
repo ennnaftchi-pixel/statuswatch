@@ -10,17 +10,15 @@ from app.checker import checker_loop
 from app.config import settings
 from app.db import SessionLocal, engine
 from app.models import Base, User
-from app.routes import admin
+from app.routes import admin, public
 from app.security import hash_password
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # 1. Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    # 2. Seed Admin User
     async with SessionLocal() as session:
         stmt = select(User).where(User.email == settings.admin_email)
         user = await session.scalar(stmt)
@@ -32,12 +30,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             session.add(new_user)
             await session.commit()
 
-    # 3. Start the background checker task
     checker_task = asyncio.create_task(checker_loop())
-
     yield
-
-    # 4. Shut down gracefully
     checker_task.cancel()
     try:
         await checker_task
@@ -49,6 +43,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="StatusWatch", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.include_router(public.router)
 app.include_router(admin.router)
 
 

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Status - StatusWatch{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 2rem;">
+    <h1>System Status</h1>
+    <p style="color: #666;">Current status of our services</p>
+</div>
+
+{% if not status_data %}
+    <div class="card" style="text-align: center;">
+        <p>No public services are currently being monitored.</p>
+    </div>
+{% else %}
+    <div class="status-grid">
+        {% for item in status_data %}
+        <div class="status-card 
+            {% if item.latest_check and item.latest_check.status == 'up' %}border-up
+            {% elif item.latest_check and item.latest_check.status == 'down' %}border-down
+            {% else %}border-unknown{% endif %}">
+            
+            <h3>{{ item.service.name }}</h3>
+            
+            {% if not item.latest_check %}
+                <span class="badge" style="background: #e5e5e5; color: #333;">Wait for check</span>
+            {% elif item.latest_check.status == 'up' %}
+                <span class="badge badge-up">Operational</span>
+                <p class="metric">{{ item.latest_check.response_time_ms }} ms</p>
+            {% else %}
+                <span class="badge badge-down">Outage</span>
+                <p class="metric text-muted">N/A</p>
+            {% endif %}
+            
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
