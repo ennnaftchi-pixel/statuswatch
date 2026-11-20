@@ -5,6 +5,9 @@
 {% block content %}
 <div class="card">
     <h2>Add New Service</h2>
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
     <form method="post" action="/admin/services/new">
         <label>Service Name
             <input type="text" name="name" required placeholder="e.g. ISI Main Website">

@@ -5,7 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
 from app.models import Service, User
-from app.security import create_session_token, verify_password, verify_session_token
+from app.security import (
+    create_session_token,
+    is_rate_limited,
+    is_safe_url,
+    record_failed_attempt,
+    verify_password,
+    verify_session_token,
+)
 from app.templates import templates
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -30,14 +37,26 @@ async def login_submit(
     password: str = Form(...),
     session: AsyncSession = Depends(get_session),
 ):
+    client_ip = request.client.host if request.client else "unknown"
+    
+    # 1. Check Rate Limit
+    if is_rate_limited(client_ip):
+        return templates.TemplateResponse(
+            request, "login.html", 
+            {"error": "Too many failed attempts. Please try again in a minute."}
+        )
+
     stmt = select(User).where(User.email == email)
     user = await session.scalar(stmt)
 
+    # 2. Verify Credentials
     if not user or not verify_password(password, user.password_hash):
+        record_failed_attempt(client_ip)
         return templates.TemplateResponse(
             request, "login.html", {"error": "Invalid email or password"}
         )
 
+    # 3. Success
     token = create_session_token(user.email)
     response = RedirectResponse(url="/admin/services", status_code=302)
     response.set_cookie(key="session", value=token, httponly=True, max_age=86400)
@@ -77,12 +96,13 @@ async def new_service_page(
     if not user_email:
         return RedirectResponse(url="/admin/login", status_code=302)
     return templates.TemplateResponse(
-        request, "admin_service_form.html", {"user_email": user_email, "service": None}
+        request, "admin_service_form.html", {"user_email": user_email, "service": None, "error": None}
     )
 
 
 @router.post("/services/new", response_class=HTMLResponse)
 async def create_service(
+    request: Request,
     user_email: str | None = Depends(get_current_user),
     name: str = Form(...),
     url: str = Form(...),
@@ -92,6 +112,13 @@ async def create_service(
 ):
     if not user_email:
         return RedirectResponse(url="/admin/login", status_code=302)
+
+    # SSRF Check
+    if not is_safe_url(url):
+        return templates.TemplateResponse(
+            request, "admin_service_form.html", 
+            {"user_email": user_email, "service": None, "error": "Invalid URL: Internal IPs, localhost, and non-HTTP protocols are blocked."}
+        )
 
     new_service = Service(
         name=name,
