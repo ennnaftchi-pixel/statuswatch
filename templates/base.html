@@ -11,11 +11,24 @@
         <a href="/" class="brand">StatusWatch</a>
         <div>
             <a href="/">Status Page</a>
-            <a href="/admin/login" style="margin-left: 1rem;">Admin</a>
+            <a href="/admin/login" class="nav-admin">Admin</a>
         </div>
     </nav>
+
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <p class="flash">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <footer>
+        <p>StatusWatch &middot; ISI L2-CS 2026/2027</p>
+    </footer>
 </body>
 </html>
