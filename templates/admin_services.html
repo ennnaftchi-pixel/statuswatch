@@ -17,6 +17,7 @@
                 <tr>
                     <th>Name</th>
                     <th>URL</th>
+                    <th>Visibility</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -27,6 +28,13 @@
                     <td>{{ service.name }}</td>
                     <td><a href="{{ service.url }}" target="_blank">{{ service.url }}</a></td>
                     <td>
+                        {% if service.is_public %}
+                            <span class="badge" style="background:#e0f2fe; color:#0369a1;">Public</span>
+                        {% else %}
+                            <span class="badge" style="background:#f3f4f6; color:#4b5563;">Private</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         {% if service.is_active %}
                             <span class="badge badge-up">Active</span>
                         {% else %}
@@ -34,12 +42,14 @@
                         {% endif %}
                     </td>
                     <td>
+                        <a href="/admin/services/{{ service.id }}/edit" class="btn-small" style="background: #4b5563; color: white; text-decoration: none;">Edit</a>
                         <a href="/admin/services/{{ service.id }}/history" class="btn-small" style="background: #18181b; color: white; text-decoration: none;">History</a>
                         
                         <form method="post" action="/admin/services/{{ service.id }}/toggle" style="display:inline;">
-                            <button type="submit" class="btn-small">
-                                {% if service.is_active %}Pause{% else %}Resume{% endif %}
-                            </button>
+                            <button type="submit" class="btn-small">{% if service.is_active %}Pause{% else %}Resume{% endif %}</button>
+                        </form>
+                        <form method="post" action="/admin/services/{{ service.id }}/toggle-public" style="display:inline;">
+                            <button type="submit" class="btn-small">{% if service.is_public %}Hide{% else %}Publish{% endif %}</button>
                         </form>
                         <form method="post" action="/admin/services/{{ service.id }}/delete" style="display:inline;" onsubmit="return confirm('Delete this service?');">
                             <button type="submit" class="btn-small btn-danger">Delete</button>

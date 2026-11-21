@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Add Service - StatusWatch{% endblock %}
+{% block title %}{% if service %}Edit{% else %}Add{% endif %} Service - StatusWatch{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h2>Add New Service</h2>
+    <h2>{% if service %}Edit{% else %}Add New{% endif %} Service</h2>
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
-    <form method="post" action="/admin/services/new">
+    <form method="post" action="{% if service %}/admin/services/{{ service.id }}/edit{% else %}/admin/services/new{% endif %}">
         <label>Service Name
-            <input type="text" name="name" required placeholder="e.g. ISI Main Website">
+            <input type="text" name="name" required value="{{ service.name if service else '' }}" placeholder="e.g. ISI Main Website">
         </label>
         <label>URL to Monitor
-            <input type="url" name="url" required placeholder="https://example.com">
+            <input type="url" name="url" required value="{{ service.url if service else '' }}" placeholder="https://example.com">
         </label>
         <label>Expected HTTP Status
-            <input type="number" name="expected_status" value="200" required>
+            <input type="number" name="expected_status" value="{{ service.expected_status if service else 200 }}" required>
         </label>
         <label>Check Interval (Seconds)
-            <input type="number" name="check_interval_seconds" value="30" required min="10">
+            <input type="number" name="check_interval_seconds" value="{{ service.check_interval_seconds if service else 30 }}" required min="10">
         </label>
         <button type="submit">Save Service</button>
         <a href="/admin/services" style="margin-left: 1rem;">Cancel</a>
