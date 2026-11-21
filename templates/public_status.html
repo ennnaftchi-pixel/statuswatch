@@ -15,13 +15,13 @@
 {% else %}
     <div class="status-grid">
         {% for item in status_data %}
-        <div class="status-card 
+        <div class="status-card
             {% if item.latest_check and item.latest_check.status == 'up' %}border-up
             {% elif item.latest_check and item.latest_check.status == 'down' %}border-down
             {% else %}border-unknown{% endif %}">
-            
+
             <h3>{{ item.service.name }}</h3>
-            
+
             {% if not item.latest_check %}
                 <span class="badge" style="background: #e5e5e5; color: #333;">Wait for check</span>
             {% elif item.latest_check.status == 'up' %}
@@ -31,7 +31,15 @@
                 <span class="badge badge-down">Outage</span>
                 <p class="metric text-muted">N/A</p>
             {% endif %}
-            
+
+            <p class="metric">Last 48 checks</p>
+            <div class="history-bar" role="img"
+                 aria-label="Last 24 hours: {{ item.history | selectattr('status', 'equalto', 'up') | list | length }} checks up, {{ item.history | selectattr('status', 'equalto', 'down') | list | length }} checks down">
+                {% for check in item.history[-48:] %}
+                <span class="h-dot h-{{ check.status }}" title="{{ check.status }} - {{ check.checked_at }}"></span>
+                {% endfor %}
+            </div>
+
         </div>
         {% endfor %}
     </div>

@@ -139,3 +139,15 @@ footer {
     .card { padding: 1rem; }
     table { display: block; overflow-x: auto; }
 }
+
+/* History bar */
+.history-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 0.5rem;
+}
+.h-dot { width: 6px; height: 24px; border-radius: 2px; background: #a1a1aa; }
+.h-up { background: #22c55e; }
+.h-down { background: #ef4444; }
