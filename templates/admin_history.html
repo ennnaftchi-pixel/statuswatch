@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}History - {{ service.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>History: {{ service.name }}</h2>
+        <a href="/admin/services" class="btn">Back to Services</a>
+    </div>
+    
+    <p><strong>URL:</strong> <a href="{{ service.url }}" target="_blank">{{ service.url }}</a></p>
+    
+    {% if not checks %}
+        <p>No checks recorded yet. Wait a few seconds for the background checker to run.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Time (UTC)</th>
+                    <th>Status</th>
+                    <th>HTTP Code</th>
+                    <th>Response Time</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for check in checks %}
+                <tr>
+                    <td>{{ check.checked_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {% if check.status == 'up' %}
+                            <span class="badge badge-up">UP</span>
+                        {% else %}
+                            <span class="badge badge-down">DOWN</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ check.http_status_code or '-' }}</td>
+                    <td>{{ check.response_time_ms }} ms</td>
+                    <td>{{ check.error_message or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

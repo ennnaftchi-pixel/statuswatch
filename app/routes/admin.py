@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.models import Service, User
+from app.models import Check, Service, User
 from app.security import (
     create_session_token,
     is_rate_limited,
@@ -39,7 +39,6 @@ async def login_submit(
 ):
     client_ip = request.client.host if request.client else "unknown"
     
-    # 1. Check Rate Limit
     if is_rate_limited(client_ip):
         return templates.TemplateResponse(
             request, "login.html", 
@@ -49,14 +48,12 @@ async def login_submit(
     stmt = select(User).where(User.email == email)
     user = await session.scalar(stmt)
 
-    # 2. Verify Credentials
     if not user or not verify_password(password, user.password_hash):
         record_failed_attempt(client_ip)
         return templates.TemplateResponse(
             request, "login.html", {"error": "Invalid email or password"}
         )
 
-    # 3. Success
     token = create_session_token(user.email)
     response = RedirectResponse(url="/admin/services", status_code=302)
     response.set_cookie(key="session", value=token, httponly=True, max_age=86400)
@@ -113,7 +110,6 @@ async def create_service(
     if not user_email:
         return RedirectResponse(url="/admin/login", status_code=302)
 
-    # SSRF Check
     if not is_safe_url(url):
         return templates.TemplateResponse(
             request, "admin_service_form.html", 
@@ -161,3 +157,37 @@ async def delete_service(
         await session.delete(service)
         await session.commit()
     return RedirectResponse(url="/admin/services", status_code=302)
+
+
+# --- FA-4: History Page ---
+
+
+@router.get("/services/{service_id}/history", response_class=HTMLResponse)
+async def service_history(
+    request: Request,
+    service_id: int,
+    user_email: str | None = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    if not user_email:
+        return RedirectResponse(url="/admin/login", status_code=302)
+
+    # Fetch the service
+    service = await session.get(Service, service_id)
+    if not service:
+        return RedirectResponse(url="/admin/services", status_code=302)
+
+    # Fetch the last 50 checks for this service
+    stmt = (
+        select(Check)
+        .where(Check.service_id == service_id)
+        .order_by(Check.id.desc())
+        .limit(50)
+    )
+    checks = (await session.scalars(stmt)).all()
+
+    return templates.TemplateResponse(
+        request, 
+        "admin_history.html", 
+        {"user_email": user_email, "service": service, "checks": checks}
+    )
