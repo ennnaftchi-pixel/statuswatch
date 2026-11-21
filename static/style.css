@@ -105,3 +105,37 @@ th { background: #f4f4f5; font-weight: bold; }
 .status-card h3 { margin-top: 0; margin-bottom: 1rem; }
 .metric { color: #666; font-size: 0.875rem; margin-top: 0.5rem; }
 .text-muted { color: #999; }
+
+
+/* Navigation */
+nav .brand { font-size: 1.25rem; }
+.nav-admin { margin-left: 1rem; }
+
+/* Flash messages */
+.flash-messages { max-width: 1000px; margin: 1rem auto 0; padding: 0 1rem; }
+.flash {
+    margin: 0 0 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #dbeafe;
+    color: #1e3a8a;
+    border-radius: 4px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    color: #71717a;
+    font-size: 0.875rem;
+    padding: 2rem 1rem;
+}
+
+/* Unknown status badge */
+.badge-unknown { background: #e4e4e7; color: #3f3f46; }
+
+/* Mobile */
+@media (max-width: 600px) {
+    nav { padding: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    main { margin: 1rem auto; }
+    .card { padding: 1rem; }
+    table { display: block; overflow-x: auto; }
+}
