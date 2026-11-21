@@ -18,10 +18,13 @@ async def test_create_service_and_list(client, db_session) -> None:
             follow_redirects=False,
         )
         assert response.status_code == 302
+        assert response.headers["location"] == "/admin/services"
 
     stmt = select(Service).where(Service.name == "Test API")
     service = await db_session.scalar(stmt)
     assert service is not None
+    assert service.url == "https://api.test.com"
+    assert service.is_active is True
 
 
 async def test_unauthorized_access_redirects(client) -> None:

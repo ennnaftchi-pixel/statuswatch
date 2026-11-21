@@ -13,7 +13,7 @@
             <input type="text" name="name" required value="{{ service.name if service else '' }}" placeholder="e.g. ISI Main Website">
         </label>
         <label>URL to Monitor
-            <input type="url" name="url" required value="{{ service.url if service else '' }}" placeholder="https://example.com">
+            <input type="url" name="url" required value="{{ service.url if service else '' }}" placeholder="https://example.com (use https://)">
         </label>
         <label>Expected HTTP Status
             <input type="number" name="expected_status" value="{{ service.expected_status if service else 200 }}" required>

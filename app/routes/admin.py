@@ -121,6 +121,8 @@ async def edit_service_page(request: Request, service_id: int, user_email: str |
     if not user_email:
         return RedirectResponse(url="/admin/login", status_code=302)
     service = await session.get(Service, service_id)
+    if not service:
+        return RedirectResponse(url="/admin/services", status_code=302)
     return templates.TemplateResponse(request, "admin_service_form.html", {"user_email": user_email, "service": service, "error": None})
 
 

@@ -49,7 +49,7 @@ Developed as an academic mini-project (Outils de Travail Collaboratif — Génie
 - Passwords hashed with bcrypt/Argon2.
 - Secrets managed strictly via environment variables (never committed to Git).
 - Login rate limiting.
-- CSRF protection.
+- CSRF mitigation via SameSite=Lax session cookies (blocks cross-site form POST attacks in modern browsers).
 - SSRF protection (HTTP/HTTPS schemes only, internal/private IP ranges blocked).
 - Docker image vulnerability scanning with Trivy.
 
