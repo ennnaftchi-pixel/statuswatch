@@ -1,7 +1,10 @@
 import asyncio
+
 from sqlalchemy import select
+
 from app.db import SessionLocal
 from app.models import Service
+
 
 async def seed_data():
     async with SessionLocal() as session:
