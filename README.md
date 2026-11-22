@@ -6,11 +6,10 @@ Online services (club websites, APIs, internal apps) often go down before their 
 
 ## Academic Context
 
-Developed as an academic mini-project (Outils de Travail Collaboratif — Génie Logiciel et Données) for the 2nd-year Computer Science (L2-CS GLSI) curriculum at the Higher Institute of Computer Science of El-Manar (ISI, Université Tunis El Manar).
+Developed as an academic mini-project (Outils de Travail Collaboratif - Génie Logiciel et Données) for the 2nd-year Computer Science (L2-CS GLSI) curriculum at the Higher Institute of Computer Science of El-Manar (ISI, Université Tunis El Manar).
 
 - **Academic Year:** 2026/2027
 - **Official Start Date:** November 9, 2026
-- **MVP Defense Date:** December 4, 2026 (Phase 1: Nov 9 – Dec 3, 2026)
 - **Supervised by:** Dr. Zakia Zouaghia
 - **Authors:** Mohamed Nafti and Omar Abdi
 
@@ -42,11 +41,12 @@ Developed as an academic mini-project (Outils de Travail Collaboratif — Génie
 - PostgreSQL 16: Stores users, services, checks, and alerts.
 - Telegram Bot API: Dispatches a single notification per state transition (down after 2 consecutive failures, and upon recovery).
 - Prometheus & Grafana: Collects service uptime/latency metrics and visualizes them on dashboards.
+
 ## Non-Functional Requirements
 
 ### Security
 
-- Passwords hashed with bcrypt/Argon2.
+- Passwords hashed with Argon2 (via pwdlib).
 - Secrets managed strictly via environment variables (never committed to Git).
 - Login rate limiting.
 - CSRF mitigation via SameSite=Lax session cookies (blocks cross-site form POST attacks in modern browsers).
@@ -114,13 +114,18 @@ statuswatch/
 │   ├── alerts.py            # Telegram Bot API state-transition notifications
 │   ├── security.py          # Password hashing, CSRF, SSRF validation & auth helpers
 │   ├── metrics.py           # Prometheus metrics collectors (/metrics)
+│   ├── templates.py         # Jinja2 environment setup
 │   └── routes/
 │       ├── __init__.py
 │       ├── public.py        # Public status page routes
 │       └── admin.py         # Authenticated admin CRUD & history routes
 ├── templates/               # Jinja2 HTML templates
+├── static/
+│   └── style.css            # Responsive CSS stylesheet
 ├── tests/                   # pytest unit & integration test suite
 │   └── __init__.py
+├── scripts/
+│   └── seed.py              # Demo data seeding script
 ├── prometheus/
 │   └── prometheus.yml       # Prometheus scrape configuration
 ├── grafana/
@@ -158,7 +163,7 @@ statuswatch/
 
 ## Roadmap
 
-### Phase 1 — MVP (November 9 – December 3, 2026)
+### Phase 1 — MVP
 
 | Week | Planned work |
 |---|---|
@@ -167,12 +172,11 @@ statuswatch/
 | Week 3 | Asynchronous checker, public status page, and Telegram alerts |
 | Week 4 | Prometheus, Grafana, CI/CD, security scanning, testing, documentation, and demo preparation |
 
-**MVP defense:** December 4, 2026.
 
-### Phase 2 — Extensions (Starting December 7, 2026)
+### Phase 2 — Extensions
 
 - 24-hour and 7-day uptime calculations.
-- Login rate limiting and additional security hardening.
+- Additional security hardening.
 - Email and Slack notifications.
 - SSL certificate expiry monitoring.
 - Terraform-based cloud deployment.
