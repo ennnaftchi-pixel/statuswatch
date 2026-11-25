@@ -13,6 +13,31 @@ Developed as an academic mini-project (Outils de Travail Collaboratif - Génie L
 - **Supervised by:** Dr. Zakia Zouaghia
 - **Authors:** Mohamed Nafti and Omar Abdi
 
+## Screenshots
+
+### Admin Dashboard
+Manage services, view history, toggle visibility, and pause monitoring.
+
+### Public Status Page
+Real-time availability with 24-hour history bars.
+
+### Observability (Grafana)
+Prometheus metrics visualized in auto-provisioned Grafana dashboards.
+
+## Screenshots
+
+### Admin Dashboard
+Manage services, view history, toggle visibility, and pause monitoring.
+![Admin Panel](assets/admin_panel.jpg)
+
+### Public Status Page
+Real-time availability with 24-hour history bars.
+![Public Status](assets/public_status.jpg)
+
+### Observability (Grafana)
+Prometheus metrics visualized in auto-provisioned Grafana dashboards.
+![Grafana Dashboard](assets/grafana_dashboard.jpeg)
+
 ## Architecture
 
 ```text
